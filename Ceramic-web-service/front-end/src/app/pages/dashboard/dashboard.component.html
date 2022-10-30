@@ -1,0 +1,253 @@
+<div class="container-fluid">
+  <app-pagetitle title="Dashboard" [breadcrumbItems]="breadCrumbItems"></app-pagetitle>
+
+  <div class="row">
+    <div class="col-xl-8">
+      <div class="row">
+        <div *ngFor="let stat of statData" class="col-md-4">
+          <app-stat [title]="stat.title" [value]="stat.value" [icon]="stat.icon"></app-stat>
+        </div>
+      </div>
+      <!-- end row -->
+
+      <div class="card">
+        <div class="card-body">
+          <div class="float-right d-none d-md-inline-block">
+            <div class="btn-group mb-2">
+              <button type="button" class="btn btn-sm btn-light">Today</button>
+              <button type="button" class="btn btn-sm btn-light active">Weekly</button>
+              <button type="button" class="btn btn-sm btn-light">Monthly</button>
+            </div>
+          </div>
+          <h4 class="card-title mb-4">Revenue Analytics</h4>
+          <div>
+            <apx-chart dir="ltr" class="apex-charts" [series]="revenueChart.series" [chart]="revenueChart.chart"
+              [legend]="revenueChart.legend" [colors]="revenueChart.colors" [labels]="revenueChart.labels"
+              [stroke]="revenueChart.stroke" [plotOptions]="revenueChart.plotOptions">
+            </apx-chart>
+          </div>
+        </div>
+
+        <div class="card-body border-top text-center">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="d-inline-flex">
+                <h5 class="mr-2">$12,253</h5>
+                <div class="text-success">
+                  <i class="mdi mdi-menu-up font-size-14"> </i>2.2 %
+                </div>
+              </div>
+              <p class="text-muted text-truncate mb-0">This month</p>
+            </div>
+
+            <div class="col-sm-4">
+              <div class="mt-4 mt-sm-0">
+                <p class="mb-2 text-muted text-truncate"><i class="mdi mdi-circle text-primary font-size-10 mr-1"></i>
+                  This Year :</p>
+                <div class="d-inline-flex">
+                  <h5 class="mb-0 mr-2">$ 34,254</h5>
+                  <div class="text-success">
+                    <i class="mdi mdi-menu-up font-size-14"> </i>2.1 %
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="mt-4 mt-sm-0">
+                <p class="mb-2 text-muted text-truncate"><i class="mdi mdi-circle text-success font-size-10 mr-1"></i>
+                  Previous Year :</p>
+                <div class="d-inline-flex">
+                  <h5 class="mb-0">$ 32,695</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-4" >
+      <div class="card">
+        <div class="card-body">
+          <div class="column ml-3">
+          <qrcode [qrdata]="ceramic" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+        </div>
+        <div class="row ml-4">
+        <button  class="btn-outline-info "  type="button" (click)="extraLarge(largeModal)">Generer une liste ({{Qrnum}})
+          </button>
+
+
+        <label
+        class="d-inline-flex ml-3">
+        <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+          [(ngModel)]="Qrnum"
+          class="custom-select custom-select-sm form-control form-control-sm mx-2">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="25">25</option>
+          <option [ngValue]="50">50</option>
+          <option [ngValue]="100">100</option>
+        </select> </label>
+
+      </div></div></div>
+
+
+      <ng-template #largeModal let-modal>
+
+        <div class="modal-header">
+          <h5 class="modal-title mt-0">Tickets QR Codes </h5>
+        </div>
+        <div class="modal-body"  >
+          <div class="row" id="div">
+          <div *ngFor="let Code of ListCode">
+         <div class="card mr-0 mb-0 ml-0  border-top">
+           <div class="card-body mt-0 mb-0">
+             <div class="row mt-0 mb-0">
+               <qrcode [qrdata]="Code" [width]="60" [errorCorrectionLevel]="'M'" class="mr-1 mt-0 mb-0"></qrcode>
+               <div class="column font-size-10 mt-0 mb-0 mr-auto align-items-center mr-center">
+                <span class="font-size-15 mt-0 mb-0 txt-align-center">CERAMIC SERVICES</span>
+                <br>BP 8340 Douala <br>Tel: 693 293 992 / 652 264 829<br><strong>{{Code}}</strong>
+              </div>
+               <img src="assets/images/ceramic-w.jpg" height="40" width="40" class="mr-1 ml-0">
+             </div>
+
+               <p class="font-size-10 mt-0 mb-0 mr-center txt-align-center">Scannez le QR Code avec l'application
+                 (à télécharger sur <br><u>playStore</u> en recherchant : "ceramic pay") et bénéficiez <br>d'une <strong>rémunération pour chaque coupon scanné</strong>
+                .<br>Vos sacs vides sont changés au prix de <strong>50 XAF</strong> à l'agence</p>
+           </div>
+         </div>
+         </div>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button"(click)="createPdf()" [disabled]="loading==true" class="btn btn-light"><span *ngIf="!loading">Exporter en PDF</span><span *ngIf="!!loading" class="spinner-border text-secondary m-0 width-10 height-10"  role="status"></span></button>
+        </div>
+      </ng-template>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="dropdown float-right" ngbDropdown>
+            <a href="javascript: void(0);" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
+              aria-expanded="false" ngbDropdownToggle>
+              <i class="mdi mdi-dots-vertical"></i>
+            </a>
+          </div>
+
+          <h4 class="card-title mb-4">Qr Codes</h4>
+          <div class="text-center">
+            <div class="row">
+              <div class="col-sm-6">
+                <div>
+                  <div class="mb-3">
+                    <apx-chart dir="ltr" class="apex-charts" [series]="sparklineEarning.series"
+                      [chart]="sparklineEarning.chart" [colors]="sparklineEarning.colors"
+                      [labels]="sparklineEarning.labels" [dataLabels]="sparklineEarning.dataLabels"
+                      [plotOptions]="sparklineEarning.plotOptions">
+                    </apx-chart>
+                  </div>
+
+                  <p class="text-muted text-truncate mb-2">Nombre total</p>
+                  <h5 class="mb-0">4600</h5>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="mt-5 mt-sm-0">
+                  <div class="mb-3">
+                    <apx-chart dir="ltr" class="apex-charts" [series]="sparklineMonthly.series"
+                      [chart]="sparklineMonthly.chart" [colors]="sparklineMonthly.colors"
+                      [labels]="sparklineMonthly.labels" [dataLabels]="sparklineMonthly.dataLabels"
+                      [plotOptions]="sparklineMonthly.plotOptions">
+                    </apx-chart>
+                  </div>
+
+                  <p class="text-muted text-truncate mb-2">Moyenne de scan</p>
+                  <h5 class="mb-0">2.5</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body">
+
+          <h4 class="card-title mb-3">Derniers paiements</h4>
+
+          <div>
+
+
+            <div class="table-responsive mt-4">
+              <table class="table table-hover mb-0 table-centered table-nowrap">
+                <tbody>
+                  <tr *ngFor="let paiement of paiements">
+                    <td style="width: 60px;">
+                      <div class="avatar-xs">
+                        <div class="avatar-title rounded-circle bg-light">
+                          <i class="ri-money-pound-circle-fill"></i>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <h5 class="font-size-14 mb-0">{{paiement.telephone}}</h5>
+                    </td>
+                    <td>
+                      <div id="spak-chart1"></div>
+                    </td>
+                    <td>
+                      <p class="text-muted mb-0">{{paiement.merite}}</p>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Dernieres inscriptions sur l'application</h4>
+          <div class="row">
+            <div class="col-sm-12 col-md-12">
+              <div id="tickets-table_filter" class="dataTables_filter text-md-right"><label
+                  class="d-inline-flex align-items-center">Rechercher:
+                  <input type="text" name="searchTerm" class="form-control form-control-sm ml-2"
+                    aria-controls="tickets-table" [(ngModel)]="term" /></label></div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-centered">
+              <thead class="thead-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Nom</th>
+                  <th>Telephone</th>
+                  <th>Date d'inscription</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of inscriptions|filter:term">
+                  <td>{{item.idUser}}</td>
+                  <td>{{item.nom}}</td>
+                  <td>{{item.telephone}}</td>
+                  <td>{{item.date_inscription}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end row -->
+</div>
