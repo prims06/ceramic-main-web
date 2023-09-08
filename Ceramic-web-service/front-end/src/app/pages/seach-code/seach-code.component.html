@@ -1,0 +1,54 @@
+<div class="container-sm"><div class="input-group mb-3">
+  <input type="text" [(ngModel)]="code" class="form-control" placeholder="Saississez le code" aria-label="Qr code" aria-describedby="basic-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-success" (click)="getCodeDetail()" type="button">Rechercher le code</button>
+  </div>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Code du coupon</th>
+      <th scope="col">Nom d'utilisateur</th>
+      <th scope="col">Telephone</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <div *ngIf="!onSearch" class="alert alert-secondary" role="alert">
+      Veuillez effectuer une recherche !
+    </div>
+    <div *ngIf="onSearch"><div *ngIf="datas[0] == null" class="alert alert-warning" role="alert">
+      Aucune donnée trouvez pour le code {{code}} <br> Le code pourrait ne pas etre scanner ou pourrait ne pas exister <br> Verifier qu'il soit bien saisit !
+    </div></div>
+    <tr *ngFor="let scan of datas">
+      <th scope="row">{{ scan.qrCode }}</th>
+      <td>{{ scan.nom }}</td>
+      <td>{{ scan.telephone }}</td>
+      <td *ngIf="scan.valider == 1">
+        <span class="badge badge-dark">Scanné</span>
+      </td>
+      <td *ngIf="scan.valider == 2">
+        <span class="badge badge-secondary">En attente</span>
+      </td>
+      <td *ngIf="scan.valider == 3">
+        <span class="badge badge-success">Payé</span>
+      </td>
+    </tr>
+    <!-- <tr>
+      <th scope="row"> scan.idScan </th>
+      <td> scan.qrCode </td>
+      <td> scan.date_scan </td>
+      <td>
+        <span class="badge badge-dark">Scanné</span>
+      </td>
+      <td>
+        <span class="badge badge-secondary">En attente</span>
+      </td>
+      <td>
+        <span class="badge badge-success">Payé</span>
+      </td>
+    </tr> -->
+  </tbody>
+</table>
+
+</div>

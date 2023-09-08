@@ -1,12 +1,14 @@
 const express = require("express");
 const mysql = require("mysql");
+var crypto = require("crypto");
 const app = express();
 const cors = require("cors");
 const req = require("express/lib/request");
+const { json } = require("body-parser");
 const pool = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "root",
+  password: "",
   database: "ceramic",
 });
 
@@ -38,6 +40,8 @@ app.get("/qr_codes", async (req, res) => {
   });
 });
 
+
+
 app.get("/utilisateurs", async (req, res) => {
   const query = "SELECT * FROM utilisateurs";
   pool.query(query, (error, results) => {
@@ -63,7 +67,7 @@ app.get("/lastuser", async (req, res) => {
 
 app.get("/scan", async (req, res) => {
   const query =
-    "SELECT U.idUser, nom, telephone, COUNT(S.idScan) AS scan, (COUNT(S.idScan)*300) AS merite FROM utilisateurs U, scan S, qr_codes Q WHERE S.idCode = Q.idCode AND S.idUser = U.idUser AND S.valider = 0 GROUP BY S.idUser ORDER BY COUNT(S.idScan) DESC";
+    "SELECT U.idUser, nom, telephone, COUNT(S.idScan) AS scan, (COUNT(S.idScan)*300) AS merite FROM utilisateurs U, scan S, qr_codes Q WHERE S.idCode = Q.idCode AND S.idUser = U.idUser AND S.valider = 1 GROUP BY S.idUser ORDER BY COUNT(S.idScan) DESC";
   pool.query(query, (error, results) => {
     if (!results[0]) {
       res.json({ status: "Not Found!" });
@@ -72,7 +76,60 @@ app.get("/scan", async (req, res) => {
     }
   });
 });
-// const idCode = req.param(idCode = 3);
+
+app.get("/paiements", async (req, res) => {
+  const query =
+  "SELECT U.telephone, COUNT(S.idScan)*300 as merite FROM scan S, utilisateurs U WHERE S.valider = 3 AND S.idUser = U.idUser GROUP BY S.date_valid ORDER BY S.date_valid DESC LIMIT 10";
+  pool.query(query, (error, results) => {
+    if (!results[0]) {
+      res.json({ status: "Not Found!" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.get("/findcode/:code", async (req, res) => {
+  const code = req.params.code
+  const query = "SELECT Q.qrCode, U.idUser, U.nom, U.telephone, S.valider FROM utilisateurs U, scan S, qr_codes Q WHERE U.idUser = S.idUser AND Q.idCode = S.idCode AND Q.qrCode = ?";
+  pool.query(query,code, (error, results) => {
+    if (!results[0]) {
+      res.json({ status: "Not Found!" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+
+app.get("/scan-detail/:idUser", async (req, res) => {
+  const idUser = req.params.idUser
+  const query = "SELECT  idScan, qrCode, date_scan, valider FROM scan S, qr_codes Q WHERE S.idCode = Q.idCode AND S.idUser = ? ORDER BY S.idScan DESC"
+  pool.query(query, idUser, (error, results) => {
+    if (!results[0]) {
+      res.json({ status: "Not Found!" });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+app.get("/stats", async (req, res) => {
+  const query =
+  "SELECT (SELECT COUNT(*) FROM utilisateurs)AS users, (SELECT COUNT(*) FROM scan WHERE valider=1) AS awaiting";
+  pool.query(query, (error, results) => {
+    if (!results[0]) {
+      res.json({ status: "Not Found!" });
+    } else {
+      res.json(results[0]);
+    }
+  });
+});
+
+
+
 app.put("/validate", async (req, res) => {
   const data = {
     idUser: req.body.idUser,
@@ -87,66 +144,29 @@ app.put("/validate", async (req, res) => {
   });
 });
 
-// var form = {
-//   username: 'ceramic',
-//   password: 'ceramic'
-// }
-//  var formData = querystring(form);
-//  var contentLength = formData.length
-
-app.get("/ceramicauth", async (req, res) => {
-  var mdp = "";
-  const data = {
-    // nom: req.body.nom,
-    password: req.body.password,
-  };
+app.post("/login",  (req, res) => {
+  var mdp = req.body.pwd||'';
+  
   const query = "SELECT password FROM `utilisateurs` WHERE nom = 'ceramic'";
   pool.query(query, (error, results) => {
     if (!results) {
       res.json({ status: "Not Found!" });
     } else {
-      res.json(results[0].password);
-      // mdp = results[0].password;
-      //       console.log(mdp);
-      // if(data.password != mdp){
-      //   console.log("mot de passe incorrect");
-      // } else{
-      //   console.log("Connection......");
-      // }
+      const nouveauHachage = crypto
+        .createHash("sha1")
+        .update(mdp)
+        .digest("hex");
+
+      if (nouveauHachage === results[0].password) {
+        console.log("Le mot de passe est valide.");
+        res.json({status:200});
+      } else {
+        console.log("Le mot de passe est invalide.");
+        res.json({status:401});
+      }
+      
     }
   });
-
-  // app.get("/ceramicauth", async (req, res)=> {
-  //   var mdp = ""
-  //   const data = {
-  //     // nom: req.body.nom,
-  //     password: req.body.password
-  //   }
-  //   const query = "SELECT password FROM `utilisateurs` WHERE nom = 'ceramic'";
-  //   pool.query(query, (error, results) => {
-  //     if(!results){
-  //       res.json({status: "Not Found!"});
-  //     }else{
-  //       res.json(results);
-  //       mdp = results[0].password;
-  //       console.log(mdp);
-  // if(data.password != mdp){
-  //   console.log("mot de passe incorrect");
-  // } else{
-  //   console.log("Connection......");
-  // }
-
-  //     }
-  //   });
-
-  // const querys = "SELECT nom, password FROM `utilisateurs` WHERE nom = ? AND password = ?";
-  // pool.query(querys,Object.values(data), (error, results) => {
-  //   if(results[0].nom != "ceramic" || results[0].password != ""){
-  //     res.json({status: "Not Found!"});
-  //   }else{
-  //     res.json(results);
-  //   }
-  // });
 });
 
 app.post("/addcode", async (req, res) => {
@@ -162,3 +182,9 @@ app.post("/addcode", async (req, res) => {
     }
   });
 });
+
+
+
+// SELECT (COUNT(idScan)*300) as price FROM `scan` WHERE valider = 0 AND idUser = ?
+// SELECT COUNT(idScan) as nonValider FROM `scan` WHERE valider = 0 AND idUser = ?
+// SELECT (SELECT COUNT(*) FROM utilisateurs)AS users, (SELECT COUNT(*) FROM scan WHERE valider=0) AS awaiting

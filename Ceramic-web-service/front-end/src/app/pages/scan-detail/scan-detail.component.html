@@ -1,0 +1,26 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Identifiants de scan</th>
+      <th scope="col">QrCode</th>
+      <th scope="col">Date de scan</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let scan of scanDetails">
+      <th scope="row">{{ scan.idScan }}</th>
+      <td>{{ scan.qrCode }}</td>
+      <td>{{ scan.date_scan }}</td>
+      <td *ngIf="scan.valider == 1">
+        <span class="badge badge-dark">Scanné</span>
+      </td>
+      <td *ngIf="scan.valider == 2">
+        <span class="badge badge-secondary">En attente</span>
+      </td>
+      <td *ngIf="scan.valider == 3">
+        <span class="badge badge-success">Payé</span>
+      </td>
+    </tr>
+  </tbody>
+</table>

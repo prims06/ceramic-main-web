@@ -18,14 +18,14 @@ export const MENU: MenuItem[] = [
     },
             {
                 id: 59,
-                label: 'Comptes',
+                label: 'Scans',
                 link: '/tables/advanced',
                 icon: 'ri-table-2'
             },
             {
                 id: 61,
-                label: 'Analyses',
-                link: '/charts/apex',
+                label: 'Rechercher',
+                link: '/search',
                 icon: 'ri-bar-chart-line',
             }
 ];

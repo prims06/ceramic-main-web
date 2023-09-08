@@ -20,8 +20,8 @@ export class AuthfakeauthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login() {
-        return this.http.get<any>(`http://localhost:3000/ceramicauth`)
+    login(pwd:String) {
+        return this.http.post<any>(`http://localhost:3000/login`, {pwd:pwd})
             .pipe(map(user => {
                 // login successful if there's a jwt token in the response
                 if (user) {
@@ -29,7 +29,7 @@ export class AuthfakeauthenticationService {
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     this.currentUserSubject.next(user);
                     // console.log("user :"+ user);
-                    
+
                 }
                 return user;
             }));

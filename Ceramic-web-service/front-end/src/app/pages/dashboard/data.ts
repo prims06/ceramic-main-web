@@ -208,21 +208,7 @@ const transactions = [
     }
 ];
 
-const statData = [
-    {
-        icon: 'ri-team-line',
-        title: 'Utilisateurs',
-        value: '1452'
-    }, {
-        icon: 'ri-money-dollar-box-fill',
-        title: 'A payer',
-        value: '52'
-    }, {
-        icon: 'ri-briefcase-4-line',
-        title: 'Transactions',
-        value: '4563'
-    }
-];
+
 const paiements = [
     {
         telephone: 6455335262,
@@ -257,4 +243,4 @@ const paiements = [
     }
 ];
 
-export { revenueChart, salesAnalytics, sparklineEarning, sparklineMonthly, chatData, transactions, statData, paiements };
+export { revenueChart, salesAnalytics, sparklineEarning, sparklineMonthly, chatData, transactions, paiements };

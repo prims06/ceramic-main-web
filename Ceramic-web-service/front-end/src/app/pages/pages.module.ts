@@ -18,6 +18,8 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ChartModule } from './chart/chart.module';
 import { TablesModule } from './tables/tables.module';
+import { ScanDetailComponent } from './scan-detail/scan-detail.component';
+import { SeachCodeComponent } from './seach-code/seach-code.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -25,7 +27,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 };
 
 @NgModule({
-  declarations: [DashboardComponent,],
+  declarations: [DashboardComponent, ScanDetailComponent, SeachCodeComponent,],
   imports: [
     CommonModule,
     FormsModule,

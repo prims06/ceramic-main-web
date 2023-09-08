@@ -20,63 +20,52 @@ export class QrService {
  }
 
  getLastUser(): Observable<any[]>{
-  return this.http.get<any[]>(this.baseUrl+'/lastuser').pipe(
+  return this.http.get<any[]>(`${this.baseUrl}/lastuser`).pipe(
     catchError(this.handleHttpError)
   );
 }
 
-//    getAll(){
-//    this.http.get('https://jsonplaceholder.typicode.com/comments').subscribe(data =>{
-//     this.data.push(data);
-//     console.log(this.data);
-//   }, error=> console.error(error));
-// }
+getLastPaiements(): Observable<any[]>{
+  return this.http.get<any[]>(`${this.baseUrl}/paiements`).pipe(
+    catchError(this.handleHttpError)
+  );
+}
+
+findCode(code): Observable<any[]>{
+  return this.http.get<any[]>(`${this.baseUrl}/findcode/${code}`).pipe(
+    catchError(this.handleHttpError)
+  );
+}
+
+getStats(): Observable<any>{
+  return this.http.get<any>(`${this.baseUrl}/stats`).pipe(
+    catchError(this.handleHttpError)
+  );
+}
+
+getScanDetail(id): Observable<any>{
+  return this.http.get<any>(`${this.baseUrl}/scan-detail/${id}`).pipe(
+    catchError(this.handleHttpError)
+  );
+}
 
 
-  fetchAll(): Observable<any[]>{
-    return this.http.get<any[]>('https://jsonplaceholder.typicode.com/comments', {responseType: "json"}).pipe(
-      tap((_) => console.log('fetched Codes'))
-    );
-  }
+
+
+getLogin(pwd:String): Observable<any>{
+  return this.http.post<any>(`${this.baseUrl}/login`, {pwd:pwd}).pipe(catchError(this.handleHttpError));
+ }
 
   fetchLastId():Observable<any>{
-    return this.http.get<any>("http://localhost:3000/qr_codes", {responseType: "json"}).pipe(
+    return this.http.get<any>(`${this.baseUrl}/qr_codes`, {responseType: "json"}).pipe(
       catchError(this.handleHttpError)
     );
   }
 
-  // public create(Code):Observable<any> {
-  //   // console.log(qrCode);
 
-
-  //   return this.http.post<any>('https://ceramic-services.000webhostapp.com/ceramic/web/setQrCode.php', Code).pipe(
-  //     catchError(this.handleHttpError));
-  //   // return this.http.post<string>('http://localhost:80/ceramic/setQrCode.php', qrCode);
-
-  // }
-
-  public getHotels(): Observable<any> {
-    return this.http.get<any[]>('https://jsonplaceholder.typicode.com/comments').pipe(
-      catchError(this.handleHttpError)
-    );
-  }
-
-  // const httpOptions = {
-  //   headers: new HttpHeaders({
-  //     'Content-Type':  'application/json',
-  //     // 'Authorization': 'mon-jeton'
-  //   })
-  // };
-  // "https://ceramic-services.000webhostapp.com/ceramic/web/setQrCode.php"
-  // create(formData: FormData): Observable<any> {
-  //  return this.http.post<string>('https://jsonplaceholder.typicode.com/posts', formData)
-  //    .pipe(
-  //      catchError(this.handleHttpError)
-  //    );
-  // }
 
   create(data): Observable<any> {
-    return this.http.post<any>('http://localhost:3000/addcode', data)
+    return this.http.post<any>(`${this.baseUrl}/addcode`, data)
       .pipe(
         catchError(this.handleHttpError)
       );

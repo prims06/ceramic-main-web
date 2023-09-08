@@ -32,8 +32,7 @@
               "src/assets/scss/app.scss",
               "src/styles.scss"
             ],
-            "scripts": [
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -128,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "CERAMIC"
+  "defaultProject": "CERAMIC",
+  "cli": {
+    "analytics": "41df69a7-6280-4c1b-8044-349a1e085a61"
+  }
 }

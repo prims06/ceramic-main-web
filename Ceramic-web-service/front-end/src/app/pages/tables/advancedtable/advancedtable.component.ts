@@ -4,7 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { Observable } from 'rxjs';
 
 import { Table } from './advanced.model';
-
+import { Router } from '@angular/router';
 import { tableData } from './data';
 import {NgbAlertModule} from '@ng-bootstrap/ng-bootstrap';
 import { AdvancedService } from './advanced.service';
@@ -36,7 +36,7 @@ export class AdvancedtableComponent implements OnInit {
 
   @ViewChildren(AdvancedSortableDirective) headers: QueryList<AdvancedSortableDirective>;
 
-  constructor(public service: AdvancedService) {
+  constructor(public service: AdvancedService, private router: Router) {
     this.tables$ = service.tables$;
     console.log(this.tables$);
     
@@ -126,5 +126,10 @@ public  validate(id: number, event?: any){
     // this.service.updateValidate().subscribe
     // return ress
   }
+
+  navigateToAbout(id) {
+    this.router.navigate(['/scan-detail/'+id]);
+  }
+
 
 }

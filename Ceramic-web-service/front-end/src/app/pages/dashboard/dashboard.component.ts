@@ -12,14 +12,12 @@ import {
 } from "./dashboard.model";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import {
-  statData,
   revenueChart,
   salesAnalytics,
   sparklineEarning,
   sparklineMonthly,
   chatData,
   transactions,
-  paiements,
 } from "./data";
 import { Code } from "../../core/models/codeQr.model";
 import { HttpClient } from "@angular/common/http";
@@ -83,8 +81,33 @@ export class DashboardComponent implements OnInit {
         this.inscriptions = inscriptions;
       },
     });
+    this.Qr.getLastPaiements().subscribe({
+      next: (data) => {
+        this.paiements = data
+      },
+    });
+    this.Qr.getStats().subscribe({
+      next:({users, awaiting})=>{
+       this.statData = [
+          {
+              icon: 'ri-team-line',
+              title: 'Utilisateurs',
+              value: users
+          }, {
+              icon: 'ri-briefcase-4-line',
+              title: 'Coupons scannées',
+              value: parseInt(awaiting).toString()
+          },{
+            icon: 'ri-money-dollar-box-fill',
+            title: 'A depenser',
+            value:(parseInt(awaiting) * 300).toString()
+        }
+      ];
+      }
+    })
 
   }
+ 
 
   private _fetchData() {
     this.revenueChart = revenueChart;
@@ -95,8 +118,6 @@ export class DashboardComponent implements OnInit {
     // this.transactions = transactions;
     // this.CodeList = [];
     this.ListCode = [];
-    this.statData = statData;
-    this.paiements = paiements;
   }
 
   public LastPaiements: paiement;
@@ -113,18 +134,7 @@ export class DashboardComponent implements OnInit {
 
     return gen;
   }
-  //  public onSend(code: string){
-  //   //  console.log(code);
 
-  //   const formData : FormData = new FormData()
-  //   formData.set('title', code)
-  //   this.Qr.create(formData).subscribe(
-  //     res=>{console.log(res);
-  //     },
-  //     err=>{console.log(err);
-  //     }
-  //   )
-  // }
   public getLastId() {
     // let ress = false
     this.Qr.fetchLastId().subscribe(
@@ -135,8 +145,6 @@ export class DashboardComponent implements OnInit {
         console.log(err);
       }
     );
-    // this.service.updateValidate().subscribe
-    // return ress
   }
 
   public multiGeneration(nombre: number): string[] {
@@ -145,30 +153,6 @@ export class DashboardComponent implements OnInit {
     for (let j = 0; j < nombre; j++) {
       let qrCode = this.generateString();
       codes.push(qrCode);
-      //  this.loadFriends()
-      //  this.onSend(this.generateString());
-      //  saveQrCode() {;
-      // const Code={
-      //   qrCode : this.generateString()
-      // }
-
-      // this.Qr.create("Code")
-      //   .subscribe(
-      //     response => {
-      //       console.log(response);
-      //     },
-      //     error => {
-      //       console.log(error);
-      //     });
-
-      // this.Qr.getHotels().subscribe({
-      //   next: hotels => {
-      //    console.log(hotels);
-
-      //   },
-      // error: err => this.errorMsg = err
-      // });
-
       this.Qr.create({
         qrCode: qrCode,
       }).subscribe(
@@ -179,8 +163,6 @@ export class DashboardComponent implements OnInit {
           console.log(err);
         }
       );
-
-      // }
     }
     return codes;
   }
