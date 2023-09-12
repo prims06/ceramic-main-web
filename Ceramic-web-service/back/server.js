@@ -67,7 +67,7 @@ app.get("/lastuser", async (req, res) => {
 
 app.get("/scan", async (req, res) => {
   const query =
-    "SELECT U.idUser, nom, telephone, COUNT(S.idScan) AS scan, (COUNT(S.idScan)*300) AS merite FROM utilisateurs U, scan S, qr_codes Q WHERE S.idCode = Q.idCode AND S.idUser = U.idUser AND S.valider = 1 GROUP BY S.idUser ORDER BY COUNT(S.idScan) DESC";
+    "SELECT U.idUser, nom, telephone, COUNT(S.idScan) AS scan, (COUNT(S.idScan)*300) AS merite FROM utilisateurs U, scan S, qr_codes Q WHERE S.idCode = Q.idCode AND S.idUser = U.idUser AND S.valider = 2 GROUP BY S.idUser ORDER BY COUNT(S.idScan) DESC";
   pool.query(query, (error, results) => {
     if (!results[0]) {
       res.json({ status: "Not Found!" });
@@ -118,7 +118,7 @@ app.get("/scan-detail/:idUser", async (req, res) => {
 
 app.get("/stats", async (req, res) => {
   const query =
-  "SELECT (SELECT COUNT(*) FROM utilisateurs)AS users, (SELECT COUNT(*) FROM scan WHERE valider=1) AS awaiting";
+  "SELECT (SELECT COUNT(*) FROM utilisateurs)AS users, (SELECT COUNT(*) FROM scan WHERE valider=2) AS awaiting";
   pool.query(query, (error, results) => {
     if (!results[0]) {
       res.json({ status: "Not Found!" });
@@ -134,7 +134,7 @@ app.put("/validate", async (req, res) => {
   const data = {
     idUser: req.body.idUser,
   };
-  const query = "UPDATE scan SET valider = 1 WHERE idUser = CAST(? AS INT)";
+  const query = "UPDATE scan SET valider = 3 WHERE idUser = CAST(? AS INT)";
   pool.query(query, data.idUser, (error) => {
     if (error) {
       res.json({ status: "failure", raison: error.code });
